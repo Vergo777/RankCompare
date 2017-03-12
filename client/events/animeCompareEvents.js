@@ -3,7 +3,8 @@
  */
 
 Template.animeCompare.events({
-    'click .animeImageColumn img' (event) {
+    'click .animeImage' (event, template) {
+        event.preventDefault();
         winningAnimeID = this.animeDetails.ID;
 
         documentID = 1;
