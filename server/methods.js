@@ -20,17 +20,33 @@ Meteor.methods({
         return newSessionID;
     },
 
+    /**
+     * We have 2 situations here - when BOTH sessionID and username are passed in (for creating a new session) and when
+     * only sessionID is passed in (for loading an existing session). Username is passed in through URL hash - when
+     * the # isn't present or the stuff after the # is empty, username is null. Note that it's possible for a nefarious
+     * user to try and include username through the hash for an existing session, so also need to confirm that the accompanying
+     * sessionID does not exist when a username is passed in.
+     */
     'updateUserListData': function (sessionID, username) {
         let existingUser = false;
         let query = UserScores.findOne({sessionID: sessionID});
 
+        // if !username -> session must exist, if username -> then session must not exist
+
         // if no username is passed in, it means that we're trying to access an existing session
-        if (typeof username === 'undefined') {
+        // http://stackoverflow.com/a/5515349
+        if (!username) {
             if(query === undefined) {
                 throw new Meteor.Error('updateUserListData.findExistingUserBySessionID', "Whoops, couldn't find any existing session with ID " + sessionID);
             }
             username = query.username;
             existingUser = true;
+        } else {
+        // or if it is passed in, we must make sure that the accompanying session ID does not already exist, otherwise it's
+        // an attempt by the user to overwrite an existing session
+            if(query !== undefined) {
+                throw new Error('updateUserListData.attemptToOverwriteExistingSession');
+            }
         }
 
         wrappedHTTPGetCall = Meteor.wrapAsync(HTTP.get);
@@ -58,7 +74,11 @@ Meteor.methods({
     },
 
     'updateAnimeScores': function (sessionID, comparisonObject) {
-        animeDetailsArray = UserScores.findOne({sessionID: sessionID}).animeDetailsArray;
+        query = UserScores.findOne({sessionID: sessionID});
+        if(query === undefined) {
+            throw new Meteor.Error('updateAnimeScores', "Session ID not found - did you mess with the URL?");
+        }
+        animeDetailsArray = query.animeDetailsArray;
         winningAnime = _.findWhere(animeDetailsArray, {ID: comparisonObject.winningAnimeID});
         winningAnime.score += 0.1;
 
@@ -98,7 +118,7 @@ addEntryForNewSession = function (webAnimeDetailsArray, sessionID, username) {
 // http://stackoverflow.com/a/20797558
 updateExistingListWithWebList = function (existingAnimeDetailsArray, webAnimeDetailsArray, sessionID) {
     existingAnimeIDs = _.pluck(existingAnimeDetailsArray, "ID");
-    webAnimeIDs = _.map(webAnimeDetailsArray, function(animeObject) {animeObject.series_animedb_id[0]});
+    webAnimeIDs = _.map(webAnimeDetailsArray, function(animeObject) {return animeObject.series_animedb_id[0]});
 
     // stuff that's in the existing list but not in the web list, i.e, stuff that's been deleted by the user
     animeIDsToRemove = _.difference(existingAnimeIDs, webAnimeIDs);
@@ -126,7 +146,7 @@ updateExistingListWithWebList = function (existingAnimeDetailsArray, webAnimeDet
 
     updatedExistingAnimeDetailsArray = existingAnimeDetailsArrayWithAnimeRemoved;
 
-    _each(webAnimeDetailsArrayFilteredByAnimeToBeAdded, function (animeObject) {
+    _.each(webAnimeDetailsArrayFilteredByAnimeToBeAdded, function (animeObject) {
         updatedExistingAnimeDetailsArray.push({
             "ID": animeObject.series_animedb_id[0],
             "score": 25,

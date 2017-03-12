@@ -3,7 +3,7 @@
  */
 
 Template.animeCompare.events({
-    'click .animeImageColumn' (event) {
+    'click .animeImageColumn img' (event) {
         winningAnimeID = this.animeDetails.ID;
 
         documentID = 1;
@@ -19,11 +19,11 @@ Template.animeCompare.events({
         }
         losingAnimeID = AnimeToCompare.findOne(documentID).animeDetails.ID;
 
-        Meteor.call('updateAnimeScores', "1", {
+        Meteor.call('updateAnimeScores', window.location.pathname.split('/')[2], {
             winningAnimeID: winningAnimeID,
             losingAnimeID: losingAnimeID
         }, function (error, result) {
-
+            sAlert.error(error.reason);
         });
     }
 });
