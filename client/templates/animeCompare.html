@@ -1,0 +1,31 @@
+<template name="animeCompare">
+    <div class="row" id="contentRow">
+        {{#with anime1Document}}
+            <div class="col-md-4 contentColumn" id="anime1">
+                <div class="row">
+                    <div class="col-md-12 animeImageColumn">
+                        <img src={{animeDetails.image}} class="animeImage">
+                    </div>
+                    <div class="col-md-12 animeDescription">
+                        <p class="lead">{{animeDetails.name}}</p>
+                    </div>
+                </div>
+            </div>
+        {{/with}}
+        <div class="col-md-4 buttonsColumn">
+            <a href="#" class="btn btn-warning btn-lg" id="drawButton"><strong>DRAW</strong></a>
+        </div>
+        {{#with anime2Document}}
+            <div class="col-md-4 contentColumn" id="anime2">
+                <div class="row">
+                    <div class="col-md-12 animeImageColumn">
+                        <img src={{animeDetails.image}} class="animeImage">
+                    </div>
+                    <div class="col-md-12 animeDescription">
+                        <p class="lead">{{animeDetails.name}}</p>
+                    </div>
+                </div>
+            </div>
+        {{/with}}
+    </div>
+</template>

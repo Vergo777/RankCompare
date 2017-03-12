@@ -1,0 +1,33 @@
+#contentRow {
+    margin-top:50px;
+}
+
+.animeImage {
+    max-height:200px;
+}
+
+.animeImageColumn img:hover {
+    opacity: 1.0;
+    cursor: url('http://sharree.com/images/reactions/ok_hand.png '), auto;
+}
+
+.animeImageColumn img {
+    opacity: 0.8;
+}
+
+.animeImageColumn {
+    text-align:center;
+}
+
+.buttonsColumn {
+    text-align:center;
+}
+
+.animeDescription {
+    margin-top:5px;
+    text-align:center;
+}
+
+#drawButton {
+    margin-top:200px;
+}
