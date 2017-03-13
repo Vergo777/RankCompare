@@ -1,6 +1,7 @@
 <template name="mainPage">
     {{#if pageLoaded}}
         {{> animeCompare}}
+        {{> animeTable}}
     {{else}}
         {{> loading}}
     {{/if}}
@@ -40,4 +41,8 @@
 
 <template name="loading">
     Loading...
+</template>
+
+<template name="animeTable">
+    {{> reactiveTable settings=tableSettings}}
 </template>

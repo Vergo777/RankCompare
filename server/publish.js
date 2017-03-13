@@ -3,6 +3,7 @@
  */
 
 import { UserScores } from '../lib/collections/database'
+import * as trueskill from "trueskill";
 
 Meteor.publish({
     'animeListData': function(sessionID) {
@@ -36,12 +37,20 @@ Meteor.publish({
         self.onStop(function() {
            handle.stop();
         });
+    },
+    'tableData': function (sessionID) {
+        let query = UserScores.find({sessionID: sessionID});
+        if(query.fetch().length == 0) {
+            throw new Meteor.Error('publish.tableData', "Whoops, couldn't find any existing session with ID " + sessionID);
+        }
+
+        return query;
     }
 });
 
 updatePublishedDocuments = function (id, fields, self, initialDocumentsPublished) {
     animeDetailsArray = fields.animeDetailsArray;
-    animeToCompare = _.sample(animeDetailsArray, 2);
+    animeToCompare = getBestQualityMatch(animeDetailsArray);
 
     if(!initialDocumentsPublished) {
         self.added("animeToCompare", 1, {animeDetails: animeToCompare[0]});
@@ -50,4 +59,34 @@ updatePublishedDocuments = function (id, fields, self, initialDocumentsPublished
         self.changed("animeToCompare", 1, {animeDetails: animeToCompare[0]});
         self.changed("animeToCompare", 2, {animeDetails: animeToCompare[1]});
     }
+};
+
+getBestQualityMatch = function (animeDetailsArray) {
+    // gets object with max sigma value
+    minSigmaObject = animeDetailsArray.reduce(function (prev, curr) {
+        // http://stackoverflow.com/a/31844649
+        // is prev.sigma greater than curr.sigma? if yes, return prev, otherwise return curr
+        return prev.sigma > curr.sigma ? prev : curr;
+    });
+
+    // we define most interesting chance of winning to be the one closest to 0.5, thus start with 1 which is one of the 2 possible values for least interesting (0 being the other)
+    mostInterestingChanceOfWinning = 1;
+    bestQualityMatchObjectIndex = 0;
+    _.each(animeDetailsArray, function (animeObject, index) {
+        // want to make sure we don't end up getting minSigmaObject as the best match for itself!
+        if(!_.isEqual(animeObject, minSigmaObject)) {
+            minSigmaObjectSkill = [minSigmaObject.score, minSigmaObject.sigma];
+            animeObjectSkill = [animeObject.score, animeObject.sigma];
+
+            chanceOfWinning = trueskill.ChanceOfWinning(minSigmaObjectSkill, animeObjectSkill);
+
+            // if current chance of winning is closer to 0.5 than the best one we have recorded so far, update our record
+            if(Math.abs(chanceOfWinning - 0.5) < Math.abs(mostInterestingChanceOfWinning - 0.5)) {
+                mostInterestingChanceOfWinning = chanceOfWinning;
+                bestQualityMatchObjectIndex = index;
+            }
+        }
+    });
+
+    return [minSigmaObject, animeDetailsArray[bestQualityMatchObjectIndex]];
 };

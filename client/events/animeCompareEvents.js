@@ -20,12 +20,24 @@ Template.animeCompare.events({
         }
         losingAnimeID = AnimeToCompare.findOne(documentID).animeDetails.ID;
 
-        Meteor.call('updateAnimeScores', window.location.pathname.split('/')[2], {
-            winningAnimeID: winningAnimeID,
-            losingAnimeID: losingAnimeID
-        }, function (error, result) {
-            sAlert.error(error.reason);
-        });
+        callUpdateAnimeScores(winningAnimeID, losingAnimeID, 0);
+    },
+    'click #drawButton' (event, template) {
+        event.preventDefault();
+        // if draw, we don't care which one won or which one lost so just assign first doc to winning and second to losing
+        winningAnimeID = AnimeToCompare.findOne(1).animeDetails.ID;
+        losingAnimeID = AnimeToCompare.findOne(2).animeDetails.ID;
+
+        callUpdateAnimeScores(winningAnimeID, losingAnimeID, 1);
     }
 });
 
+callUpdateAnimeScores = function (winningAnimeID, losingAnimeID, draw) {
+    Meteor.call('updateAnimeScores', Router.current().params.sessionID, {
+        winningAnimeID: winningAnimeID,
+        losingAnimeID: losingAnimeID,
+        draw: draw
+    }, function (error, result) {
+        sAlert.error(error.reason);
+    });
+};

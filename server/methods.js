@@ -4,6 +4,7 @@
 
 import {UserScores} from '../lib/collections/database'
 import { Random } from 'meteor/random'
+import * as trueskill from "trueskill";
 
 Meteor.methods({
     'getNewSessionID': function () {
@@ -79,8 +80,29 @@ Meteor.methods({
             throw new Meteor.Error('updateAnimeScores', "Session ID not found - did you mess with the URL?");
         }
         animeDetailsArray = query.animeDetailsArray;
-        winningAnime = _.findWhere(animeDetailsArray, {ID: comparisonObject.winningAnimeID});
-        winningAnime.score += 0.1;
+        winningAnimeObject = _.findWhere(animeDetailsArray, {ID: comparisonObject.winningAnimeID});
+        losingAnimeObject = _.findWhere(animeDetailsArray, {ID: comparisonObject.losingAnimeID});
+
+        winningAnimePlayer = {};
+        losingAnimePlayer = {};
+        winningAnimePlayer.skill = [winningAnimeObject.score, winningAnimeObject.sigma];
+        losingAnimePlayer.skill = [losingAnimeObject.score, losingAnimeObject.sigma];
+
+        if(comparisonObject.draw) {
+            winningAnimePlayer.rank = 1;
+            losingAnimePlayer.rank = 1;
+        } else {
+            winningAnimePlayer.rank = 1;
+            losingAnimePlayer.rank = 2;
+        }
+
+        trueskill.AdjustPlayers([winningAnimePlayer, losingAnimePlayer]);
+
+        winningAnimeObject.score = winningAnimePlayer.skill[0];
+        winningAnimeObject.sigma = winningAnimePlayer.skill[1];
+
+        losingAnimeObject.score = losingAnimePlayer.skill[0];
+        losingAnimeObject.sigma = losingAnimePlayer.skill[1];
 
         UserScores.update({sessionID: sessionID}, {
             $set: {"animeDetailsArray": animeDetailsArray}
@@ -89,6 +111,8 @@ Meteor.methods({
                 throw new Error("updateAnimeScores.updateDatabase");
             }
         });
+
+        return "daijobu";
     }
 });
 
