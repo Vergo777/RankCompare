@@ -9,5 +9,9 @@ Template.homepageForm.events({
             $("#websiteLoginModal").modal('hide');
             Router.go('animeCompare', {sessionID: newSessionID}, {hash: template.find('#websiteUsername').value});
         });
+    },
+    'submit #homepageForm' (event, template) {
+        event.preventDefault();
+        Router.go('animeCompare', {sessionID: template.find('#resumeSessionText').value});
     }
 });
