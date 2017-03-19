@@ -1,9 +1,15 @@
 <template name="layout">
+    <head>
+        <title>RankCompare - score anime by comparisons!</title>
+        <link rel="icon" href='/favicon.ico'>
+    </head>
     <body>
         {{> sAlert}}
         {{> navbar}}
         <div class="container">
             {{> yield}}
         </div>
+        {{> footer}}
+        <script src="https://use.fontawesome.com/d48eea267b.js"></script>
     </body>
 </template>

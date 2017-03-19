@@ -51,7 +51,7 @@ Meteor.methods({
         }
 
         wrappedHTTPGetCall = Meteor.wrapAsync(HTTP.get);
-        result = wrappedHTTPGetCall("https://myanimelist.net/malappinfo.php?u=" + username + "&status=completed&type=anime", {});
+        result = wrappedHTTPGetCall("https://myanimelist.net/malappinfo.php?u=" + username + "&status=all&type=anime", {});
         wrappedParseStringCall = Meteor.wrapAsync(xml2js.parseString);
         try {
             parseResult = wrappedParseStringCall(result.content);
@@ -63,7 +63,9 @@ Meteor.methods({
                 "Failed to get user data from endpoint - Have you entered your user ID correctly?");
         }
 
-        webAnimeDetailsArray = parseResult.myanimelist.anime;
+        // MAL's API is trash and returns only ALL the anime, including PTW, currently watching etc. Hence need to filter
+        // it to just completed shows manually >_>
+        webAnimeDetailsArray = filterListByCompletedShows(parseResult.myanimelist.anime);
 
         if(existingUser) {
             updateExistingListWithWebList(query.animeDetailsArray, webAnimeDetailsArray, sessionID);
@@ -186,5 +188,11 @@ updateExistingListWithWebList = function (existingAnimeDetailsArray, webAnimeDet
         if (databaseUpdateError) {
             throw new Error("updateExistingListWithWebList.updateDatabase");
         }
+    });
+};
+
+filterListByCompletedShows = function (animeDetailsArray) {
+    return _.filter(animeDetailsArray, function (animeObject) {
+        return animeObject.my_status[0] == MAL_COMPLETED_STATUS_NUMBER;
     });
 };
