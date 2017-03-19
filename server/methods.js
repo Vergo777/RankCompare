@@ -112,7 +112,7 @@ Meteor.methods({
             }
         });
 
-        return "daijobu";
+        return "daijoubu";
     }
 });
 
