@@ -50,7 +50,6 @@ scalingFunction = function(unscaledScore, currentMax, currentMin, wantedMax, wan
     } else if (unscaledScore == currentMin) {
         return wantedMin;
     } else {
-        scaledScore = Math.round((unscaledScore - currentMin)*((wantedMax - wantedMin)/wantedIncrement + 1)/(currentMax - currentMin))*wantedIncrement + wantedMin;
-        return scaledScore;
+        return Math.round((unscaledScore - currentMin)*((wantedMax - wantedMin)/wantedIncrement + 1)/(currentMax - currentMin))*wantedIncrement + wantedMin;
     }
 };
