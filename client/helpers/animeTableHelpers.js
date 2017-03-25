@@ -45,10 +45,8 @@ getMinAndMaxScores = function (animeDetailsArray) {
 
 // http://stackoverflow.com/questions/5294955/how-to-scale-down-a-range-of-numbers-with-a-known-min-and-max-value
 scalingFunction = function(unscaledScore, currentMax, currentMin, wantedMax, wantedMin, wantedIncrement) {
-    if (unscaledScore == currentMax) {
+    if (unscaledScore >= currentMax) {
         return wantedMax;
-    } else if (unscaledScore == currentMin) {
-        return wantedMin;
     } else {
         return Math.round((unscaledScore - currentMin)*((wantedMax - wantedMin)/wantedIncrement + 1)/(currentMax - currentMin))*wantedIncrement + wantedMin;
     }
