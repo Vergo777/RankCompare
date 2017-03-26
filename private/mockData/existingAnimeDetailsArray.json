@@ -1,0 +1,16 @@
+[
+  {
+    "ID": 1,
+    "score": 10,
+    "sigma": 10,
+    "name": "Nisekoi",
+    "image": "niseURL"
+  },
+  {
+    "ID": 2,
+    "score": 10,
+    "sigma": 10,
+    "name": "Oregairu",
+    "image": "niseURL"
+  }
+]

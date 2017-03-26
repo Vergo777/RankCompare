@@ -1,0 +1,12 @@
+[
+  {
+    "series_animedb_id":[1],
+    "series_title": ["Nisekoi"],
+    "series_image": ["niseURL"]
+  },
+  {
+    "series_animedb_id":[3],
+    "series_title": ["Shirobako"],
+    "series_image": ["niseURL"]
+  }
+]
