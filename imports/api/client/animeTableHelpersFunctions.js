@@ -25,7 +25,10 @@ export const getMinAndMaxScores = function (animeDetailsArray) {
 };
 
 // http://stackoverflow.com/questions/5294955/how-to-scale-down-a-range-of-numbers-with-a-known-min-and-max-value
-export const scalingFunction = function(unscaledScore, currentMax, currentMin, wantedMax, wantedMin) {
-    scaledScore = ((wantedMax - wantedMin)*(unscaledScore - currentMin))/(currentMax - currentMin) + wantedMin;
-    return Math.round(scaledScore);
+export const scalingFunction = function(unscaledScore, currentMax, currentMin, wantedMax, wantedMin, wantedIncrement) {
+    if (unscaledScore >= currentMax) {
+        return wantedMax;
+    } else {
+        return Math.round((unscaledScore - currentMin)*((wantedMax - wantedMin)/wantedIncrement + 1)/(currentMax - currentMin))*wantedIncrement + wantedMin;
+    }
 };
