@@ -28,6 +28,6 @@ export const scalingFunction = function(unscaledScore, currentMax, currentMin, w
     if (unscaledScore >= currentMax) {
         return wantedMax;
     } else {
-        return Math.round((unscaledScore - currentMin)*((wantedMax - wantedMin)/wantedIncrement + 1)/(currentMax - currentMin))*wantedIncrement + wantedMin;
+        return Math.round((unscaledScore - currentMin)*((wantedMax - wantedMin)/wantedIncrement + 1)/(currentMax - currentMin) - 0.5)*wantedIncrement + wantedMin;
     }
 };
