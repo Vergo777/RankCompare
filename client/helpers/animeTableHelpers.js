@@ -11,7 +11,7 @@ Template.animeTable.helpers({
 
         _.each(animeDetailsArray, function (animeDetails) {
             animeUnscaledScore = animeDetails.score;
-            animeScaledAndRoundedScore = scalingFunction(animeUnscaledScore, minAndMaxScores.maxScore, minAndMaxScores.minScore, MAX_SCALED_SCORE, MIN_SCALED_SCORE);
+            animeScaledAndRoundedScore = scalingFunction(animeUnscaledScore, minAndMaxScores.maxScore, minAndMaxScores.minScore, MAX_SCALED_SCORE, MIN_SCALED_SCORE, SCORE_INCREMENT);
 
             animeDetails.score = animeScaledAndRoundedScore;
         });
