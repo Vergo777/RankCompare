@@ -39,11 +39,11 @@ export const getBestQualityMatch = function (animeDetailsArray) {
     _.each(animeDetailsArray, function (animeObject, index) {
         // want to make sure we don't end up getting maxSigmaObject as the best match for itself!
         if(!_.isEqual(animeObject, maxSigmaObject)) {
-            matchQuality = trueskill.matchQualityFunction(TRUESKILL_DEFAULT_SIGMA, maxSigmaObject.score, animeObject.score, maxSigmaObject.sigma, animeObject.sigma);
+            currentMatchQuality = trueskill.matchQualityFunction(TRUESKILL_DEFAULT_SIGMA, maxSigmaObject.score, animeObject.score, maxSigmaObject.sigma, animeObject.sigma);
 
             // if current match quality is greater than the best one we have recorded so far, update our record
-            if(matchQuality > bestMatchQuality) {
-                bestMatchQuality = matchQuality;
+            if(currentMatchQuality > bestMatchQuality) {
+                bestMatchQuality = currentMatchQuality;
                 bestQualityMatchObjectIndex = index;
             }
         }
