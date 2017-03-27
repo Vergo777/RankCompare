@@ -25,20 +25,25 @@ export const getBestQualityMatch = function (animeDetailsArray) {
         return prev.sigma > curr.sigma ? prev : curr;
     });
 
-    // we define most interesting chance of winning to be the one closest to 0.5, thus start with 1 which is one of the 2 possible values for least interesting (0 being the other)
-    mostInterestingChanceOfWinning = 1;
+    // define match quality as in equation (7) of https://www.microsoft.com/en-us/research/publication/trueskilltm-a-bayesian-skill-rating-system/
+    matchQualityFunction = function(defaultSigma, mu1, mu2, sigma1, sigma2) {
+        performanceVariance = Math.pow(defaultSigma/2, 2);
+        varianceConstant = 2*performanceVariance + Math.pow(sigma1, 2) + Math.pow(sigma2, 2);
+        matchQuality = Math.sqrt(2*performanceVariance/varianceConstant)*Math.exp(-Math.pow(mu1 - mu2, 2)/(2*varianceConstant));
+        return matchQuality;
+    }
+
+    // we maximize the match quality between the object with max sigma value and other objects
+    bestMatchQuality = 0;
     bestQualityMatchObjectIndex = 0;
     _.each(animeDetailsArray, function (animeObject, index) {
         // want to make sure we don't end up getting maxSigmaObject as the best match for itself!
         if(!_.isEqual(animeObject, maxSigmaObject)) {
-            maxSigmaObjectSkill = [maxSigmaObject.score, maxSigmaObject.sigma];
-            animeObjectSkill = [animeObject.score, animeObject.sigma];
+            matchQuality = trueskill.matchQualityFunction(TRUESKILL_DEFAULT_SIGMA, maxSigmaObject.score, animeObject.score, maxSigmaObject.sigma, animeObject.sigma);
 
-            chanceOfWinning = trueskill.ChanceOfWinning(maxSigmaObjectSkill, animeObjectSkill);
-
-            // if current chance of winning is closer to 0.5 than the best one we have recorded so far, update our record
-            if(Math.abs(chanceOfWinning - 0.5) < Math.abs(mostInterestingChanceOfWinning - 0.5)) {
-                mostInterestingChanceOfWinning = chanceOfWinning;
+            // if current match quality is greater than the best one we have recorded so far, update our record
+            if(matchQuality > bestMatchQuality) {
+                bestMatchQuality = matchQuality;
                 bestQualityMatchObjectIndex = index;
             }
         }
