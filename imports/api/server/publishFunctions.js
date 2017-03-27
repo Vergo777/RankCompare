@@ -17,6 +17,14 @@ export const updatePublishedDocuments = function (id, fields, self, initialDocum
     }
 };
 
+// define match quality as in equation (7) of https://www.microsoft.com/en-us/research/publication/trueskilltm-a-bayesian-skill-rating-system/
+matchQualityFunction = function(defaultSigma, mu1, mu2, sigma1, sigma2) {
+    performanceVariance = Math.pow(defaultSigma/2, 2);
+    varianceConstant = 2*performanceVariance + Math.pow(sigma1, 2) + Math.pow(sigma2, 2);
+    matchQuality = Math.sqrt(2*performanceVariance/varianceConstant)*Math.exp(-Math.pow(mu1 - mu2, 2)/(2*varianceConstant));
+    return matchQuality;
+}
+
 export const getBestQualityMatch = function (animeDetailsArray) {
     // gets object with max sigma value
     maxSigmaObject = animeDetailsArray.reduce(function (prev, curr) {
@@ -25,21 +33,13 @@ export const getBestQualityMatch = function (animeDetailsArray) {
         return prev.sigma > curr.sigma ? prev : curr;
     });
 
-    // define match quality as in equation (7) of https://www.microsoft.com/en-us/research/publication/trueskilltm-a-bayesian-skill-rating-system/
-    matchQualityFunction = function(defaultSigma, mu1, mu2, sigma1, sigma2) {
-        performanceVariance = Math.pow(defaultSigma/2, 2);
-        varianceConstant = 2*performanceVariance + Math.pow(sigma1, 2) + Math.pow(sigma2, 2);
-        matchQuality = Math.sqrt(2*performanceVariance/varianceConstant)*Math.exp(-Math.pow(mu1 - mu2, 2)/(2*varianceConstant));
-        return matchQuality;
-    }
-
     // we maximize the match quality between the object with max sigma value and other objects
     bestMatchQuality = 0;
     bestMatchQualityObjectIndex = 0;
     _.each(animeDetailsArray, function (animeObject, index) {
         // want to make sure we don't end up getting maxSigmaObject as the best match for itself!
         if(!_.isEqual(animeObject, maxSigmaObject)) {
-            currentMatchQuality = trueskill.matchQualityFunction(TRUESKILL_DEFAULT_SIGMA, maxSigmaObject.score, animeObject.score, maxSigmaObject.sigma, animeObject.sigma);
+            currentMatchQuality = matchQualityFunction(TRUESKILL_DEFAULT_SIGMA, maxSigmaObject.score, animeObject.score, maxSigmaObject.sigma, animeObject.sigma);
 
             // if current match quality is greater than the best one we have recorded so far, update our record
             if(currentMatchQuality > bestMatchQuality) {
