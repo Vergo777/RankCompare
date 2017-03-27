@@ -35,7 +35,7 @@ export const getBestQualityMatch = function (animeDetailsArray) {
 
     // we maximize the match quality between the object with max sigma value and other objects
     bestMatchQuality = 0;
-    bestQualityMatchObjectIndex = 0;
+    bestMatchQualityObjectIndex = 0;
     _.each(animeDetailsArray, function (animeObject, index) {
         // want to make sure we don't end up getting maxSigmaObject as the best match for itself!
         if(!_.isEqual(animeObject, maxSigmaObject)) {
@@ -44,10 +44,10 @@ export const getBestQualityMatch = function (animeDetailsArray) {
             // if current match quality is greater than the best one we have recorded so far, update our record
             if(currentMatchQuality > bestMatchQuality) {
                 bestMatchQuality = currentMatchQuality;
-                bestQualityMatchObjectIndex = index;
+                bestMatchQualityObjectIndex = index;
             }
         }
     });
 
-    return [maxSigmaObject, animeDetailsArray[bestQualityMatchObjectIndex]];
+    return [maxSigmaObject, animeDetailsArray[bestMatchQualityObjectIndex]];
 };
