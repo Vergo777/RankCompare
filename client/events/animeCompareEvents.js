@@ -38,6 +38,7 @@ callUpdateAnimeScores = function (winningAnimeID, losingAnimeID, draw) {
         losingAnimeID: losingAnimeID,
         draw: draw
     }, function (error, result) {
-        sAlert.error(error.reason);
+        if(!(error === undefined))
+            sAlert.error(error.reason);
     });
 };

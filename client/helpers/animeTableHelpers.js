@@ -3,6 +3,8 @@
  */
 
 import {getMinAndMaxScores, scalingFunction} from '/imports/api/client/animeTableHelpersFunctions.js';
+import {UserScores} from "../../lib/collections/database";
+UserScoresTable = UserScores;
 
 Template.animeTable.helpers({
     'tableSettings' : function () {
