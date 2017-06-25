@@ -44,5 +44,31 @@
 </template>
 
 <template name="animeTable">
-    {{> reactiveTable settings=tableSettings}}
+    <div class="row">
+        <div class="col-md-3">
+            <button type="reset" class="btn btn-primary" data-toggle="modal" data-target="#exportListModal">Export to MAL</button>
+        </div>
+        {{> reactiveTable settings=tableSettings rowsPerPage=100}}
+    </div>
+
+    <div class="modal" id="exportListModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Export to MAL</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Clicking the export button below will generate an XML file for download. Once downloaded,
+                        go to <a href="https://myanimelist.net/import.php" target="_blank">the MAL import page</a> and
+                        follow the instructions there using the XML file to update your scores.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="exportListModalSubmitButton">Export!</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>

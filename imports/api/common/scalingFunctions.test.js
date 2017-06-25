@@ -3,7 +3,7 @@
  */
 
 import {assert} from 'meteor/practicalmeteor:chai';
-import {getMinAndMaxScores, scalingFunction} from '/imports/api/client/animeTableHelpersFunctions.js';
+import {getMinAndMaxScores, scalingFunction} from '/imports/api/common/scalingFunctions.js';
 import '/lib/constants.js';
 
 describe('AnimeTable Helpers', function () {

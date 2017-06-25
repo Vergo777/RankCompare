@@ -4,7 +4,7 @@
 
 .animeImageColumn img:hover {
     opacity: 1.0;
-    cursor: url('http://sharree.com/images/reactions/ok_hand.png '), auto;
+    cursor: url('/images/ok-hand-sign.png'), auto;
 }
 
 .animeImageColumn img {

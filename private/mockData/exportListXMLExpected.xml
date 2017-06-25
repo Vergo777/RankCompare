@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<myanimelist>
+    <myinfo>
+        <user_export_type>1</user_export_type>
+    </myinfo>
+    <anime>
+        <series_animedb_id>1</series_animedb_id>
+        <my_score>10</my_score>
+        <update_on_import>1</update_on_import>
+    </anime>
+    <anime>
+        <series_animedb_id>2</series_animedb_id>
+        <my_score>10</my_score>
+        <update_on_import>1</update_on_import>
+    </anime>
+</myanimelist>

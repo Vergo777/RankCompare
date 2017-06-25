@@ -3,10 +3,14 @@
  */
 
 import {UserScores} from '/lib/collections/database';
-import {assert} from 'meteor/practicalmeteor:chai';
+import chai from 'chai';
+import chaixml from 'chai-xml';
 import {resetDatabase} from 'meteor/xolvio:cleaner';
-import {parseResultFromRemoteURL, updateExistingListWithWebList, addEntryForNewSession} from '/imports/api/server/methodsFunctions.js';
+import {parseResultFromRemoteURL, updateExistingListWithWebList, addEntryForNewSession, exportList} from '/imports/api/server/methodsFunctions.js';
 import '/lib/constants.js';
+
+assert = chai.assert;
+expect = chai.expect;
 
 describe('Methods', function () {
 
@@ -18,6 +22,23 @@ describe('Methods', function () {
             assert.equal(webAnimeDetailsArray[0].series_title[0], "Cowboy Bebop");
             assert.equal(webAnimeDetailsArray[1].series_title[0], "Trigun");
         });
+    });
+
+    describe('exportList', function () {
+        before(function () {
+            resetDatabase();
+            chai.use(chaixml);
+        });
+
+        it('should convert anime details array into XML that can be imported by MAL', function () {
+            let existingAnimeDetailsArray = JSON.parse(Assets.getText('mockData/existingAnimeDetailsArray.json'));
+            let expectedXML = Assets.getText('mockData/exportListXMLExpected.xml');
+
+            let obtainedXML = exportList(existingAnimeDetailsArray);
+            wrappedParseStringCall = Meteor.wrapAsync(xml2js.parseString);
+
+            expect(expectedXML).xml.to.equal(obtainedXML);
+        })
     });
 
     describe('addEntryForNewSession', function () {

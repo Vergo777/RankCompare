@@ -23,7 +23,7 @@ matchQualityFunction = function(defaultSigma, mu1, mu2, sigma1, sigma2) {
     varianceConstant = 2*performanceVariance + Math.pow(sigma1, 2) + Math.pow(sigma2, 2);
     matchQuality = Math.sqrt(2*performanceVariance/varianceConstant)*Math.exp(-Math.pow(mu1 - mu2, 2)/(2*varianceConstant));
     return matchQuality;
-}
+};
 
 export const getBestQualityMatch = function (animeDetailsArray) {
     // gets object with max sigma value

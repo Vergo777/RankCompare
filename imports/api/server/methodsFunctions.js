@@ -3,6 +3,26 @@
  */
 
 import {UserScores} from '/lib/collections/database';
+import {scaleAnimeArrayScores} from '/imports/api/common/scalingFunctions.js';
+import xmlbuilder from 'xmlbuilder';
+
+export const exportList = function (animeDetailsArray) {
+    let animeDetailsArrayScaledScores = scaleAnimeArrayScores(animeDetailsArray);
+
+    root = xmlbuilder.create('myanimelist');
+    root.ele('myinfo')
+            .ele('user_export_type', {}, 1);
+
+    _.each(animeDetailsArrayScaledScores, function (anime) {
+        let animeElement = root.ele('anime');
+        animeElement.ele('series_animedb_id', {}, anime.ID);
+        animeElement.ele('my_score', {}, anime.score);
+        animeElement.ele('update_on_import', {}, 1);
+    });
+
+    xml = root.end({ pretty: true});
+    return xml;
+};
 
 export const parseResultFromRemoteURL = function (xmlContent) {
     wrappedParseStringCall = Meteor.wrapAsync(xml2js.parseString);

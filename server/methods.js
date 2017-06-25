@@ -5,7 +5,7 @@
 import {UserScores} from '../lib/collections/database'
 import { Random } from 'meteor/random'
 import * as trueskill from "trueskill";
-import {parseResultFromRemoteURL, addEntryForNewSession, filterListByCompletedShows, updateExistingListWithWebList} from '/imports/api/server/methodsFunctions.js';
+import {parseResultFromRemoteURL, addEntryForNewSession, filterListByCompletedShows, updateExistingListWithWebList, exportList} from '/imports/api/server/methodsFunctions.js';
 
 Meteor.methods({
     'getNewSessionID': function () {
@@ -107,5 +107,11 @@ Meteor.methods({
         });
 
         return "daijoubu";
+    },
+
+    'exportList': function (sessionID) {
+        let query = UserScores.findOne({sessionID: sessionID});
+        let animeDetailsArray = query.animeDetailsArray;
+        return exportList(animeDetailsArray);
     }
 });
