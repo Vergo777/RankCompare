@@ -42,7 +42,7 @@ export const getMinAndMaxScores = function (animeDetailsArray) {
 };
 
 export const scoreScalingFunction = function(unscaledScore, unscaledSigma, currentMax, currentMin, wantedMax, wantedMin, wantedIncrement, conservativity) {
-    conservativeScore = unscaledScore - conservativity*unscaledSigma
+    conservativeScore = unscaledScore - conservativity*unscaledSigma;
     if (conservativeScore >= currentMax) {
         return wantedMax;
     } else {
