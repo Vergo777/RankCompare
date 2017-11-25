@@ -10,7 +10,7 @@
     "chai-xml": "^0.3.1",
     "meteor-node-stubs": "^0.2.5",
     "simpl-schema": "^0.2.3",
-    "trueskill": "0.0.2",
+    "trueskill": "^0.0.2",
     "xmlbuilder": "^9.0.1"
   }
 }
