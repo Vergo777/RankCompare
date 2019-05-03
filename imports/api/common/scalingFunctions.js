@@ -7,9 +7,13 @@ export const scaleAnimeArrayScores = function (animeDetailsArray) {
 
     _.each(animeDetailsArray, function (animeDetails) {
         animeUnscaledScore = animeDetails.score;
-        animeScaledAndRoundedScore = scalingFunction(animeUnscaledScore, minAndMaxScores.maxScore, minAndMaxScores.minScore, MAX_SCALED_SCORE, MIN_SCALED_SCORE, SCORE_INCREMENT);
+        animeUnscaledSigma = animeDetails.sigma;
+        
+        animeScaledAndRoundedScore = scoreScalingFunction(animeUnscaledScore, animeUnscaledSigma, minAndMaxScores.maxScore, minAndMaxScores.minScore, MAX_SCALED_SCORE, MIN_SCALED_SCORE, SCORE_INCREMENT, TRUESKILL_CONSERVATIVITY);
+        animeScaledSigma = sigmaScalingFunction(animeUnscaledSigma, 2*TRUESKILL_DEFAULT_SCORE, MAX_SCALED_SCORE, MIN_SCALED_SCORE, SCORE_INCREMENT);
 
         animeDetails.score = animeScaledAndRoundedScore;
+        animeDetails.sigma = animeScaledSigma;
     });
 
     return animeDetailsArray;
@@ -37,10 +41,15 @@ export const getMinAndMaxScores = function (animeDetailsArray) {
     }
 };
 
-export const scalingFunction = function(unscaledScore, currentMax, currentMin, wantedMax, wantedMin, wantedIncrement) {
-    if (unscaledScore >= currentMax) {
+export const scoreScalingFunction = function(unscaledScore, unscaledSigma, currentMax, currentMin, wantedMax, wantedMin, wantedIncrement, conservativity) {
+    conservativeScore = unscaledScore - conservativity*unscaledSigma;
+    if (conservativeScore >= currentMax) {
         return wantedMax;
     } else {
-        return Math.round((unscaledScore - currentMin)*((wantedMax - wantedMin)/wantedIncrement + 1)/(currentMax - currentMin) - 0.5)*wantedIncrement + wantedMin;
+        return Math.round((conservativeScore - currentMin)*((wantedMax - wantedMin)/wantedIncrement + 1)/(currentMax - currentMin) - 0.5)*wantedIncrement + wantedMin;
     }
+};
+
+export const sigmaScalingFunction = function(unscaledSigma, unscaledScoreRange, wantedMaxScore, wantedMinScore, wantedScoreIncrement) {
+    return unscaledSigma*(wantedMaxScore - wantedMinScore + wantedScoreIncrement)/(unscaledScoreRange);
 };
